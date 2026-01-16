@@ -1,0 +1,225 @@
+substitutions:
+  ## === SENSOR MODEL (for naming only - auto-detected at runtime) ===
+  model: "sen66"
+  
+  ## === DEVICE CONFIGURATION ===
+  device_name: "sen66-monitor"
+  friendly_name: "SEN66 Air Quality Monitor"
+  
+  ## === HARDWARE SETTINGS ===
+  i2c_sda: "21"
+  i2c_scl: "22"
+  update_interval: "10s"
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+    version: recommended
+
+logger:
+  level: DEBUG
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  power_save_mode: LIGHT
+  ap:
+    ssid: "${device_name} Fallback"
+    password: !secret fallback_password
+
+web_server:
+  port: 80
+
+captive_portal:
+
+i2c:
+  sda: ${i2c_sda}
+  scl: ${i2c_scl}
+  scan: true
+  frequency: 100kHz
+  id: bus_a
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [sen6x]
+
+## =============================================================================
+## SEN6x COMPONENT CONFIGURATION
+## =============================================================================
+## Model is auto-detected from sensor at runtime!
+sen6x:
+  i2c_id: bus_a
+  address: 0x6B
+  update_interval: ${update_interval}
+  ## Optional: External pressure sensor for CO2 compensation
+  # pressure_source: barometric_pressure
+  
+  ## RHT Acceleration - Acelera respuesta de temperatura y humedad ante cambios bruscos
+  ## Afecta a AMBOS sensores (T y RH) - modelo predictivo del motor RH/T interno
+  ## Útil para: exterior, baños con vapor, sensores en carcasas con inercia térmica
+  ## Valores escalados x10 (ej: k: 100 = 10.0 real, t1: 100 = 10.0 segundos)
+  ## Para uso doméstico normal NO es necesario (el sensor usa valores óptimos por defecto)
+  # rht_acceleration:
+  #   k: 100     # Filter constant K (ganancia proporcional)
+  #   p: 50      # Filter constant P (ganancia integral)
+  #   t1: 100    # Constante tiempo sensor (inercia térmica del chip)
+  #   t2: 300    # Constante tiempo carcasa (inercia térmica del encapsulado)
+
+## =============================================================================
+## SENSORS
+## =============================================================================
+sensor:
+  - platform: sen6x
+    ## ========== UNIVERSAL (All models) ==========
+    pm_1_0:
+      name: "PM 1.0"
+    pm_2_5:
+      name: "PM 2.5"
+    pm_10_0:
+      name: "PM 10.0"
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+    
+    ## ========== PM4.0 (SEN62, SEN66, SEN69C) ==========
+    pm_4_0:
+      name: "PM 4.0"
+    
+    ## ========== VOC/NOx (SEN65, SEN66, SEN68, SEN69C) ==========
+    voc_index:
+      name: "VOC Index"
+      ## VOC Algorithm Tuning (6 parameters per Sensirion datasheet)
+      ## learning_time_offset_hours: 12h (default) or 720h for WELL Building Standard
+      algorithm_tuning:
+        learning_time_offset_hours: 720  ## WELL Building Standard (default: 12h)
+        # index_offset: 100
+        # learning_time_gain_hours: 12
+        # gating_max_duration_minutes: 180
+        # std_initial: 50
+        # gain_factor: 230
+    nox_index:
+      name: "NOx Index"
+      ## NOx Algorithm Tuning (6 parameters)
+      # algorithm_tuning:
+      #   index_offset: 1
+      #   learning_time_offset_hours: 12
+      #   learning_time_gain_hours: 12
+      #   gating_max_duration_minutes: 720
+      #   std_initial: 50
+      #   gain_factor: 230
+    
+    ## ========== CO2 (SEN63C, SEN66, SEN69C) ==========
+    co2:
+      name: "CO2"
+    
+    ## ========== HCHO (SEN68, SEN69C only) ==========
+    formaldehyde:
+      name: "Formaldehyde"
+    
+    ## ========== TVOC Estimations (Sensirion AppNote) ==========
+    tvoc_well:
+      name: "TVOC WELL"
+    tvoc_reset:
+      name: "TVOC RESET"
+    tvoc_ethanol:
+      name: "TVOC Ethanol"
+    
+    ## ========== Number Concentration (particles/cm³) ==========
+    nc_0_5:
+      name: "NC PM0.5"
+    nc_1_0:
+      name: "NC PM1.0"
+    nc_2_5:
+      name: "NC PM2.5"
+    nc_4_0:
+      name: "NC PM4.0"
+    nc_10_0:
+      name: "NC PM10.0"
+    
+    ## ========== Diagnostic Sensors ==========
+    ambient_pressure:
+      name: "Ambient Pressure"
+    sensor_altitude:
+      name: "Sensor Altitude"
+
+## =============================================================================
+## TEXT SENSORS
+## =============================================================================
+text_sensor:
+  - platform: sen6x
+    product_name:
+      name: "Product Name"
+    serial_number:
+      name: "Serial Number"
+    firmware_version:
+      name: "Firmware Version"
+    status_hex:
+      name: "Status Hex"
+
+## =============================================================================
+## BINARY SENSORS (Error Flags)
+## =============================================================================
+binary_sensor:
+  - platform: sen6x
+    fan_error:
+      name: "Fan Error"
+    fan_warning:
+      name: "Fan Warning"
+    gas_error:
+      name: "Gas Error"
+    rht_error:
+      name: "RHT Error"
+    pm_error:
+      name: "PM Error"
+    laser_error:
+      name: "Laser Error"
+    fan_cleaning_active:
+      name: "Fan Cleaning Active"
+
+## =============================================================================
+## BUTTONS (Actions)
+## =============================================================================
+button:
+  - platform: sen6x
+    fan_cleaning:
+      name: "Start Fan Cleaning"
+    device_reset:
+      name: "Device Reset"
+    reset_preferences:
+      name: "Reset Preferences"
+
+## =============================================================================
+## SWITCHES (Toggles)
+## =============================================================================
+switch:
+  - platform: sen6x
+    auto_fan_cleaning:
+      name: "Auto Fan Cleaning"
+    co2_automatic_self_calibration:
+      name: "CO2 ASC"
+
+## =============================================================================
+## NUMBERS (Adjustable Parameters)
+## =============================================================================
+number:
+  - platform: sen6x
+    altitude_compensation:
+      name: "Altitude"
+    temperature_offset:
+      name: "Temp Offset"

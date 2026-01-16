@@ -1,0 +1,97 @@
+# Full SEN6x Configuration Example
+# All available sensors and controls
+
+esphome:
+  name: sen6x-full
+  platform: ESP32
+  board: esp32dev
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  id: bus_a
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [sen6x]
+
+sen6x:
+  i2c_id: bus_a
+  address: 0x6B
+  update_interval: 10s
+
+sensor:
+  - platform: sen6x
+    # Particulate Matter
+    pm_1_0:
+      name: "PM 1.0"
+    pm_2_5:
+      name: "PM 2.5"
+    pm_4_0:
+      name: "PM 4.0"
+    pm_10_0:
+      name: "PM 10.0"
+    # Environmental
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+    # Gas
+    voc_index:
+      name: "VOC Index"
+    nox_index:
+      name: "NOx Index"
+    co2:
+      name: "CO2"
+    formaldehyde:
+      name: "Formaldehyde"
+    # TVOC Estimation (Sensirion AppNote)
+    tvoc_well:
+      name: "TVOC WELL Building"
+    tvoc_reset:
+      name: "TVOC RESET Air"
+    tvoc_ethanol:
+      name: "TVOC Ethanol"
+
+binary_sensor:
+  - platform: sen6x
+    fan_error:
+      name: "Fan Error"
+    gas_error:
+      name: "Gas Error"
+    rht_error:
+      name: "RHT Error"
+
+text_sensor:
+  - platform: sen6x
+    product_name:
+      name: "Product Name"
+    serial_number:
+      name: "Serial Number"
+
+button:
+  - platform: sen6x
+    fan_cleaning:
+      name: "Start Fan Cleaning"
+    device_reset:
+      name: "Device Reset"
+
+switch:
+  - platform: sen6x
+    auto_fan_cleaning:
+      name: "Auto Fan Cleaning"
+    co2_automatic_self_calibration:
+      name: "CO2 Auto Calibration"
+
+number:
+  - platform: sen6x
+    altitude_compensation:
+      name: "Altitude"
+    temperature_offset:
+      name: "Temperature Offset"

@@ -1,0 +1,32 @@
+# ESPHome build artifacts
+.esphome/
+*.ota.bin
+*.factory.bin
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+._*
+
+# Secrets (never commit)
+secrets.yaml
+secrets.*.yaml
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
