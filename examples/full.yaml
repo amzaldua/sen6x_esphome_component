@@ -19,9 +19,24 @@ external_components:
   - source: github://amzaldua/sen6x_esphome_component
     components: [sen6x]
 
+# Optional: External barometric sensor for CO2 pressure compensation
+# Uncomment and configure if you have a BME280, BMP280, or similar sensor
+# bme280_i2c:
+#   address: 0x76
+#   update_interval: 60s
+#   temperature:
+#     name: "BME280 Temperature"
+#   pressure:
+#     name: "Barometric Pressure"
+#     id: barometer_pressure
+#   humidity:
+#     name: "BME280 Humidity"
+
 sen6x:
   address: 0x6B
   update_interval: 10s
+  # Uncomment to enable CO2 pressure compensation from external sensor:
+  # pressure_source: barometer_pressure
 
 sensor:
   - platform: sen6x
