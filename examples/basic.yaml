@@ -35,3 +35,9 @@ sensor:
       name: "VOC Index"
     co2:
       name: "CO2"
+
+# Altitude compensation for accurate CO2 readings
+number:
+  - platform: sen6x
+    altitude_compensation:
+      name: "Altitude"
