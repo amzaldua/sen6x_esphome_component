@@ -3,7 +3,8 @@
 
 esphome:
   name: sen6x-sensor
-  platform: ESP32
+
+esp32:
   board: esp32dev
 
 wifi:
@@ -13,16 +14,12 @@ wifi:
 i2c:
   sda: GPIO21
   scl: GPIO22
-  id: bus_a
 
 external_components:
-  - source:
-      type: local
-      path: components
+  - source: github://amzaldua/sen6x_esphome_component
     components: [sen6x]
 
 sen6x:
-  i2c_id: bus_a
   address: 0x6B
   update_interval: 10s
 

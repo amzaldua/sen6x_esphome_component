@@ -3,7 +3,8 @@
 
 esphome:
   name: sen6x-full
-  platform: ESP32
+
+esp32:
   board: esp32dev
 
 wifi:
@@ -13,16 +14,12 @@ wifi:
 i2c:
   sda: GPIO21
   scl: GPIO22
-  id: bus_a
 
 external_components:
-  - source:
-      type: local
-      path: components
+  - source: github://amzaldua/sen6x_esphome_component
     components: [sen6x]
 
 sen6x:
-  i2c_id: bus_a
   address: 0x6B
   update_interval: 10s
 
@@ -42,7 +39,7 @@ sensor:
       name: "Temperature"
     humidity:
       name: "Humidity"
-    # Gas
+    # Gas Indexes
     voc_index:
       name: "VOC Index"
     nox_index:
@@ -51,11 +48,11 @@ sensor:
       name: "CO2"
     formaldehyde:
       name: "Formaldehyde"
-    # TVOC Estimation (Sensirion AppNote)
+    # TVOC Estimations (Sensirion AppNote)
     tvoc_well:
-      name: "TVOC WELL Building"
+      name: "TVOC WELL"
     tvoc_reset:
-      name: "TVOC RESET Air"
+      name: "TVOC RESET"
     tvoc_ethanol:
       name: "TVOC Ethanol"
 
@@ -63,10 +60,18 @@ binary_sensor:
   - platform: sen6x
     fan_error:
       name: "Fan Error"
+    fan_warning:
+      name: "Fan Warning"
     gas_error:
       name: "Gas Error"
     rht_error:
       name: "RHT Error"
+    pm_error:
+      name: "PM Error"
+    laser_error:
+      name: "Laser Error"
+    fan_cleaning_active:
+      name: "Fan Cleaning Active"
 
 text_sensor:
   - platform: sen6x
@@ -74,6 +79,8 @@ text_sensor:
       name: "Product Name"
     serial_number:
       name: "Serial Number"
+    status_hex:
+      name: "Status Hex"
 
 button:
   - platform: sen6x
@@ -81,6 +88,8 @@ button:
       name: "Start Fan Cleaning"
     device_reset:
       name: "Device Reset"
+    force_co2_calibration:
+      name: "Force CO2 Calibration"
 
 switch:
   - platform: sen6x
@@ -95,3 +104,5 @@ number:
       name: "Altitude"
     temperature_offset:
       name: "Temperature Offset"
+    outdoor_co2_reference:
+      name: "Outdoor CO2 Reference"
