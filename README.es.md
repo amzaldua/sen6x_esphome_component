@@ -163,8 +163,8 @@ Los datos del sensor deben ser interpretados por profesionales cualificados cuan
 | SEN63C | ⚠️ No probado – comandos implementados según datasheet, no validados en hardware |
 | SEN65 | ⚠️ No probado – comandos implementados según datasheet, no validados en hardware |
 | **SEN66** | ✅ **Probado y verificado** |
-| SEN68 | ⚠️ No probado – aún no disponible en el mercado |
-| SEN69C | ⚠️ No probado – aún no disponible en el mercado |
+| SEN68 | ⚠️ No probado – comandos implementados según datasheet, no validados en hardware |
+| SEN69C | ⚠️ No probado – comandos implementados según datasheet, no validados en hardware |
 
 ### Notas
 
