@@ -317,8 +317,8 @@ Sensor data should be interpreted by qualified professionals when used for healt
 | SEN63C | ⚠️ Untested – commands implemented per datasheet, not validated on hardware |
 | SEN65 | ⚠️ Untested – commands implemented per datasheet, not validated on hardware |
 | **SEN66** | ✅ **Tested and verified** |
-| SEN68 | ⚠️ Untested – not yet available in market |
-| SEN69C | ⚠️ Untested – not yet available in market |
+| SEN68 | ⚠️ Untested – commands implemented per datasheet, not validated on hardware  |
+| SEN69C | ⚠️ Untested – commands implemented per datasheet, not validated on hardware  |
 
 ### Notes
 
